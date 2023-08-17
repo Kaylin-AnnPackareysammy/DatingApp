@@ -60,8 +60,8 @@
           "defaultConfiguration": "production"
         },
         "serve": {
-          "options":{
-            "ssl":true,
+          "options": {
+            "ssl": true,
             "sslCert": "./ssl/server.crt",
             "sslKey": "./ssl/server.key"
           },
