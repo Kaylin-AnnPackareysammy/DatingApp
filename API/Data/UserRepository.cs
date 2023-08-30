@@ -18,9 +18,9 @@ public class UserRepository : IUserRepository
         _mapper = mapper;
     }
 
-    public async Task<PagedList<MemberDto>> GetMemberAsync(UserParams userParams)
+    public async  Task<PagedList<MemberDto>> GetMemberAsync(UserParams userParams)
     {
-        var query = _context.Users.AsQueryable();
+       var query = _context.Users.AsQueryable();
 
         query = query.Where(u => u.UserName != userParams.CurrentUsername);
         query = query.Where(u => u.Gender == userParams.Gender);
@@ -52,16 +52,27 @@ public class UserRepository : IUserRepository
     public async Task<AppUser> GetUserByIdAsync(int id)
     {
         return await _context.Users.FindAsync(id);
+   
     }
 
     public async Task<AppUser> GetUserByNameAsync(string username)
     {
-        return await _context.Users.Include(p => p.Photos).SingleOrDefaultAsync(x => x.UserName == username);
+         return await _context.Users.Include(p => p.Photos).SingleOrDefaultAsync(x => x.UserName == username);
     }
 
-    public async Task<IEnumerable<AppUser>> GetUsersAsync()
+    public Task GetUserByUsernameAsync(string username)
     {
-        return await _context.Users.Include(p => p.Photos).ToListAsync();
+        throw new NotImplementedException();
+    }
+
+    // public async Task GetUserByUsernameAsync(string username)
+    // {
+    //    return await _context.Users.Include(p => p.Photos).SingleOrDefaultAsync(x => x.UserName == username);
+    // }
+
+    public async  Task<IEnumerable<AppUser>> GetUsersAsync()
+    {
+       return await _context.Users.Include(p => p.Photos).ToListAsync();
     }
 
     public async Task<bool> SaveAllAsync()
@@ -69,7 +80,7 @@ public class UserRepository : IUserRepository
         return await _context.SaveChangesAsync() > 0;
     }
 
-    public  void Update(AppUser user)
+    public void Update(AppUser user)
     {
         _context.Entry(user).State = EntityState.Modified;
     }

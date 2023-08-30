@@ -1,5 +1,6 @@
 ﻿using API.Data;
 using API.Helpers;
+using API.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace API;
@@ -19,6 +20,7 @@ public static class ApplicationServiceExtensions
         services.Configure<CloudinarySettings>(config.GetSection("CloudinarySettings"));
         services.AddScoped<IPhotoService, PhotoService>();
         services.AddScoped<LogUserActivity>();
+        services.AddScoped<ILikesRepository, LikesRespository>();
 
         return services;
     }   
