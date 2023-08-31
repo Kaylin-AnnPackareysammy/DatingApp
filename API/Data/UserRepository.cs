@@ -12,21 +12,20 @@ public class UserRepository : IUserRepository
     private readonly DataContext _context;
     private readonly IMapper _mapper;
 
-    public UserRepository(DataContext context, IMapper mapper)
+    public Task<MemberDto> GetMemberAsync(string username)
     {
-        _context = context;
-        _mapper = mapper;
+        throw new NotImplementedException();
     }
 
-    public async  Task<PagedList<MemberDto>> GetMemberAsync(UserParams userParams)
+    public async Task<PagedList<MemberDto>> GetMembersAsync(UserParams userParams)
     {
-       var query = _context.Users.AsQueryable();
+        var query = _context.Users.AsQueryable();
 
         query = query.Where(u => u.UserName != userParams.CurrentUsername);
         query = query.Where(u => u.Gender == userParams.Gender);
 
         var minDob = DateOnly.FromDateTime(DateTime.Today.AddYears(-userParams.MaxAge - 1));
-        var maxDob = DateOnly.FromDateTime(DateTime.Today.AddYears(-userParams.MinAge - 1));
+        var maxDob = DateOnly.FromDateTime(DateTime.Today.AddYears(-userParams.MinAge));
 
         query = query.Where(u => u.DateOfbirth >= minDob && u.DateOfbirth <= maxDob);
 
@@ -36,43 +35,29 @@ public class UserRepository : IUserRepository
             _ => query.OrderByDescending(u => u.LastActive)
         };
 
-        return await PagedList<MemberDto>.CreatedAsync(query.AsNoTracking().ProjectTo<MemberDto>(_mapper.ConfigurationProvider), 
-                userParams.PageNumber, 
-                userParams.PageSize);
+        return await PagedList<MemberDto>.CreatedAsync(query.AsNoTracking()
+            .ProjectTo<MemberDto>(_mapper.ConfigurationProvider),
+                userParams.PageNumber, userParams.PageSize);
     }
 
-    public async Task<MemberDto> GetMemberAsync(string username)
-    {
-       return await _context.Users
-                .Where(x => x.UserName == username)
-                .ProjectTo<MemberDto>(_mapper.ConfigurationProvider)
-                .SingleOrDefaultAsync();
-    }
+    
 
     public async Task<AppUser> GetUserByIdAsync(int id)
     {
         return await _context.Users.FindAsync(id);
-   
     }
 
-    public async Task<AppUser> GetUserByNameAsync(string username)
+
+    public async Task<AppUser> GetUserByUsernameAsync(string username)
     {
-         return await _context.Users.Include(p => p.Photos).SingleOrDefaultAsync(x => x.UserName == username);
+        return await _context.Users
+            .Include(p => p.Photos)
+            .SingleOrDefaultAsync(x => x.UserName == username);
     }
 
-    public Task GetUserByUsernameAsync(string username)
+    public async Task<IEnumerable<AppUser>> GetUsersAsync()
     {
-        throw new NotImplementedException();
-    }
-
-    // public async Task GetUserByUsernameAsync(string username)
-    // {
-    //    return await _context.Users.Include(p => p.Photos).SingleOrDefaultAsync(x => x.UserName == username);
-    // }
-
-    public async  Task<IEnumerable<AppUser>> GetUsersAsync()
-    {
-       return await _context.Users.Include(p => p.Photos).ToListAsync();
+        return await _context.Users.ToListAsync();
     }
 
     public async Task<bool> SaveAllAsync()
@@ -83,5 +68,10 @@ public class UserRepository : IUserRepository
     public void Update(AppUser user)
     {
         _context.Entry(user).State = EntityState.Modified;
+    } 
+
+    public Task<AppUser> GetUserByNameAsync(string username)
+    {
+        throw new NotImplementedException();
     }
 }
