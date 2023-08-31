@@ -8,7 +8,7 @@ import { Member } from 'src/app/_modules/member';
 import { MemberMessagesComponent } from '../member-messages/member-messages.component';
 import { MessageService } from 'src/app/_services/message.service';
 import { Message } from 'src/app/_modules/message';
-import { PresenceService } from 'src/app/_services/presence.service';
+// import { PresenceService } from 'src/app/_services/presence.service';
 import { AccountService } from 'src/app/_services/account.service';
 import { User } from 'src/app/_modules/user';
 import { take } from 'rxjs';
@@ -27,8 +27,8 @@ export class MemberDetailComponent implements OnInit, OnDestroy {
   activeTab?: TabDirective;
   messages: Message[] = [];
   user?: User;
-
-  constructor(public presenceService: PresenceService, private route: ActivatedRoute,
+// public presenceService: PresenceService,
+  constructor( private route: ActivatedRoute,
     private messageService: MessageService, private accountService: AccountService) {
     this.accountService.currentUser$.pipe(take(1)).subscribe({
       next: user => {
