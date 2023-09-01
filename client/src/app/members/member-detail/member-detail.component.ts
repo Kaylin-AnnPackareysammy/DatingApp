@@ -12,6 +12,7 @@ import { Message } from 'src/app/_modules/message';
 import { AccountService } from 'src/app/_services/account.service';
 import { User } from 'src/app/_modules/user';
 import { take } from 'rxjs';
+import { PresenceService } from 'src/app/_services/presence.service';
 
 @Component({
   selector: 'app-member-detail',
@@ -27,9 +28,8 @@ export class MemberDetailComponent implements OnInit, OnDestroy {
   activeTab?: TabDirective;
   messages: Message[] = [];
   user?: User;
-// public presenceService: PresenceService,
-  constructor( private route: ActivatedRoute,
-    private messageService: MessageService, private accountService: AccountService) {
+
+  constructor( private route: ActivatedRoute, private messageService: MessageService, private accountService: AccountService, public presenceService: PresenceService,) {
     this.accountService.currentUser$.pipe(take(1)).subscribe({
       next: user => {
         if (user) this.user = user;
